@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAISON AUDACE — Le tailleur fuchsia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400;1,9..144,600&family=Archivo:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --fond:      #16080c;
+    --fond-2:    #1f1015;
+    --marbre:    #dba0ae;
+    --fuchsia:   #d1147c;
+    --fuchsia-d: #8f0f4f;
+    --or:        #b98a52;
+    --ivoire:    #f4e9e4;
+    --muet:      #a9848c;
+    --ligne:     rgba(244,233,228,0.14);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    background:var(--fond);
+    color:var(--ivoire);
+    font-family:'Archivo', sans-serif;
+    overflow-x:hidden;
+  }
+
+  a{ color:inherit; }
+
+  /* ---------- barre supérieure ---------- */
+  .barre{
+    position:relative;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:28px clamp(20px,5vw,64px) 0;
+    z-index:5;
+  }
+  .barre__nom{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:15px;
+    letter-spacing:0.14em;
+  }
+  .barre__ref{
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--muet);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    min-height:100svh;
+    display:grid;
+    grid-template-columns:56px 1fr 56px;
+    align-items:center;
+    padding-bottom:64px;
+  }
+
+  .eyebrow{
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+    justify-self:center;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.22em;
+    color:var(--muet);
+    white-space:nowrap;
+  }
+  .eyebrow--droite{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow__point{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--fuchsia);
+    box-shadow:0 0 0 3px rgba(209,20,124,0.25);
+  }
+
+  .scene{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:0 16px;
+  }
+
+  .titre{
+    position:relative;
+    z-index:3;
+    margin:0 0 -3.2vw;
+    text-align:center;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    line-height:0.92;
+    font-size:clamp(44px, 9vw, 128px);
+    letter-spacing:-0.01em;
+    color:var(--ivoire);
+    mix-blend-mode:screen;
+    pointer-events:none;
+  }
+  .titre em{
+    font-style:italic;
+    font-weight:600;
+    color:var(--fuchsia);
+  }
+
+  /* ---------- le vêtement ---------- */
+  .vetement{
+    position:relative;
+    width:min(72vw, 620px);
+    z-index:2;
+  }
+  .vetement__cadre{
+    position:relative;
+    border-radius:2px;
+    overflow:hidden;
+    cursor:pointer;
+    outline:none;
+  }
+  .vetement__cadre img{
+    display:block;
+    width:100%;
+    height:auto;
+    transition:transform 900ms cubic-bezier(.16,1,.3,1), filter 600ms ease;
+  }
+  .vetement__cadre:hover img,
+  .vetement__cadre:focus-visible img{
+    transform:scale(1.018);
+  }
+  .vetement__cadre:focus-visible{
+    box-shadow:0 0 0 1px var(--or);
+  }
+
+  /* liseré doré au survol, façon vitrine */
+  .vetement__cadre::after{
+    content:"";
+    position:absolute; inset:0;
+    border:1px solid transparent;
+    transition:border-color 400ms ease;
+    pointer-events:none;
+  }
+  .vetement__cadre:hover::after,
+  .vetement__cadre:focus-visible::after{
+    border-color:rgba(185,138,82,0.55);
+  }
+
+  .vetement__legende{
+    margin-top:18px;
+    display:flex;
+    justify-content:space-between;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.05em;
+    color:var(--muet);
+    border-top:1px solid var(--ligne);
+    padding-top:12px;
+  }
+  .vetement__legende b{
+    color:var(--ivoire);
+    font-weight:400;
+  }
+
+  /* ---------- la plaque vidéo (élément signature) ---------- */
+  .plaque{
+    position:absolute;
+    top:8%;
+    right:-8px;
+    transform:translateX(28px) scale(0.96);
+    width:180px;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 320ms cubic-bezier(.16,1,.3,1), transform 320ms cubic-bezier(.16,1,.3,1), visibility 320ms;
+    z-index:4;
+    pointer-events:none;
+  }
+  .vetement__cadre:hover ~ .plaque,
+  .vetement__cadre:focus-visible ~ .plaque{
+    opacity:1;
+    visibility:visible;
+    transform:translateX(0) scale(1);
+  }
+
+  .plaque__boite{
+    position:relative;
+    background:var(--fond-2);
+    border:1px solid rgba(185,138,82,0.45);
+    padding:6px;
+  }
+  .plaque__boite video{
+    display:block;
+    width:100%;
+    aspect-ratio:3/4;
+    object-fit:cover;
+    filter:saturate(1.05);
+  }
+  /* coins d'alignement, comme une fiche technique */
+  .plaque__coin{
+    position:absolute;
+    width:9px; height:9px;
+    border:1px solid var(--or);
+  }
+  .plaque__coin--hg{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .plaque__coin--hd{ top:-1px; right:-1px; border-left:none; border-bottom:none; }
+  .plaque__coin--bg{ bottom:-1px; left:-1px; border-right:none; border-top:none; }
+  .plaque__coin--bd{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+
+  .plaque__etiquette{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-top:9px;
+    font-family:'Space Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.1em;
+    color:var(--muet);
+  }
+  .plaque__rec{
+    width:5px; height:5px; border-radius:50%;
+    background:#e23a63;
+    animation:clignote 1.6s infinite;
+  }
+  @keyframes clignote{
+    0%,100%{ opacity:1; } 50%{ opacity:0.25; }
+  }
+
+  /* connecteur discret entre le vêtement et la plaque */
+  .plaque::before{
+    content:"";
+    position:absolute;
+    left:-24px; top:22%;
+    width:24px; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(185,138,82,0.6));
+  }
+
+  @media (max-width: 760px){
+    .hero{ grid-template-columns:1fr; padding-top:24px; }
+    .eyebrow{ display:none; }
+    .vetement{ width:88vw; }
+    .plaque{
+      position:static;
+      transform:none;
+      width:100%;
+      max-width:220px;
+      margin:20px auto 0;
+      opacity:1; visibility:visible;
+      pointer-events:auto;
+    }
+    .plaque::before{ display:none; }
+    .titre{ font-size:clamp(34px,12vw,60px); margin-bottom:-14px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .vetement__cadre img, .plaque, .plaque__rec{ transition:none; animation:none; }
+  }
+
+  /* ---------- pied de page ---------- */
+  .pied{
+    border-top:1px solid var(--ligne);
+    padding:40px clamp(20px,5vw,64px) 48px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+    justify-content:space-between;
+    align-items:flex-end;
+  }
+  .pied__slogan{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:clamp(20px,3vw,30px);
+    max-width:520px;
+    color:var(--marbre);
+  }
+  .pied__maison{
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--muet);
+    text-align:right;
+  }
+</style>
+</head>
+<body>
+
+  <div class="barre">
+    <div class="barre__nom">MAISON&nbsp;AUDACE</div>
+    <div class="barre__ref">N°VII — TAILLEUR FUCHSIA</div>
+  </div>
+
+  <section class="hero">
+
+    <div class="eyebrow">COLLECTION PERMANENTE — LYON</div>
+
+    <div class="scene">
+      <h1 class="titre">OSER<br><em>la couleur.</em></h1>
+
+      <div class="vetement">
+        <div class="vetement__cadre" tabindex="0" aria-label="Le tailleur fuchsia — survolez ou activez pour voir le vêtement en mouvement">
+          <img src="tailleur-fuchsia.png" alt="Tailleur fuchsia porté en apesanteur devant un mur de marbre rose veiné d'or">
+        </div>
+
+        <div class="plaque" aria-hidden="true">
+          <div class="plaque__boite">
+            <span class="plaque__coin plaque__coin--hg"></span>
+            <span class="plaque__coin plaque__coin--hd"></span>
+            <span class="plaque__coin plaque__coin--bg"></span>
+            <span class="plaque__coin plaque__coin--bd"></span>
+            <video muted loop playsinline preload="metadata"
+                   poster="tailleur-fuchsia.png"
+                   src="tailleur-mouvement.mp4"></video>
+          </div>
+          <div class="plaque__etiquette">
+            <span class="plaque__rec"></span>
+            EN MOUVEMENT
+          </div>
+          <div class="plaque__debug" style="margin-top:6px;font-family:'Space Mono',monospace;font-size:9px;color:#e2a4b0;"></div>
+        </div>
+
+        <div class="vetement__legende">
+          <span>RÉF. AD-1996-FX</span>
+          <b>LAINE DOUBLE ÉPAISSEUR · FUCHSIA</b>
+          <span>ÉD. LIMITÉE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="eyebrow eyebrow--droite">
+      <span class="eyebrow__point"></span>
+      SURVOLEZ LE VÊTEMENT
+    </div>
+
+  </section>
+
+  <footer class="pied">
+    <p class="pied__slogan">La couleur ne s'excuse jamais.</p>
+    <div class="pied__maison">MAISON AUDACE<br>ATELIER — CROIX-ROUSSE, LYON</div>
+  </footer>
+
+<script>
+  const cadre = document.querySelector('.vetement__cadre');
+  const video = document.querySelector('.plaque video');
+  const reduitMouvement = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const debug = document.querySelector('.plaque__debug');
+  function rafraichirEtat(){
+    if(!debug) return;
+    const etat = video.paused ? 'EN PAUSE' : 'EN LECTURE';
+    debug.textContent = etat + ' — t=' + video.currentTime.toFixed(1)
+      + 's — readyState=' + video.readyState
+      + (video.error ? ' — ERREUR code ' + video.error.code : '');
+  }
+  setInterval(rafraichirEtat, 250);
+
+  function lancer(){
+    if(reduitMouvement) return;
+    video.play().catch(()=>{});
+  }
+  function stopper(){
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  cadre.addEventListener('mouseenter', lancer);
+  cadre.addEventListener('mouseleave', stopper);
+  cadre.addEventListener('focus', lancer);
+  cadre.addEventListener('blur', stopper);
+
+  // sur mobile (pas de vrai hover) : la plaque est déjà visible en permanence,
+  // on lance simplement la vidéo au premier contact avec la page.
+  const estTactile = matchMedia('(hover: none)').matches;
+  if(estTactile && !reduitMouvement){
+    document.addEventListener('touchstart', lancer, { once:true, passive:true });
+  }
+</script>
+
+</body>
+</html>
